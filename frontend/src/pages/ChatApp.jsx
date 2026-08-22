@@ -137,7 +137,7 @@ const ChatApp = () => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "llama3-8b-8192",
+          model: "allam-2-7b",
           messages: [
             {
               role: "system",
