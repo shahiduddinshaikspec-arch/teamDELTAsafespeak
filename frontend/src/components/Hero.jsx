@@ -5,20 +5,6 @@ const Hero = () => {
     <section className="hero-section" style={{ padding: 'var(--spacing-section) 0', backgroundColor: 'var(--color-bg-page)' }}>
       <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
         
-        <div style={{ 
-          backgroundColor: 'var(--color-accent-purple)', 
-          padding: '0.5rem 1rem', 
-          borderRadius: 'var(--radius-pill)', 
-          color: 'var(--color-primary)', 
-          fontWeight: 800,
-          marginBottom: 'var(--spacing-lg)',
-          fontSize: '0.9rem',
-          letterSpacing: '0.05em',
-          textTransform: 'uppercase'
-        }}>
-          SafeSpeak v1.0
-        </div>
-
         <h1 style={{ fontSize: '4rem', marginBottom: 'var(--spacing-md)', maxWidth: '800px', lineHeight: 1.1 }}>
           Speak freely.<br/>
           <span style={{ color: 'var(--color-primary-light)' }}>Stay anonymous.</span>
