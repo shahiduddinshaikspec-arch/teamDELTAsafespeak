@@ -110,7 +110,7 @@ const ChatApp = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Use environment variable for the API key in Vercel
+  // Use environment variable for the API key in Vercel (Create a .env.local file locally for testing!)
   const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
   const scrollToBottom = () => {
@@ -152,7 +152,7 @@ const ChatApp = () => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "qwen/qwen3.6-27b",
+          model: "llama-3.3-70b-versatile",
           max_tokens: 2048,
           messages: [
             {
