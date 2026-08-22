@@ -1,16 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Image as ImageIcon, Smile, MoreVertical, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import DecryptedText from '../components/DecryptedText';
 
 const ChatBubble = ({ text, isOwn, translationLabel, avatar }) => (
-  <div style={{
-    display: 'flex',
-    gap: '1rem',
-    flexDirection: isOwn ? 'row-reverse' : 'row',
-    alignItems: 'flex-end',
-    marginBottom: '1.5rem',
-    width: '100%',
-    animation: 'fadeIn 0.3s ease'
-  }}>
+  <motion.div 
+    initial={{ scale: 0.9, opacity: 0, y: 15 }}
+    animate={{ scale: 1, opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+    style={{
+      display: 'flex',
+      gap: '1rem',
+      flexDirection: isOwn ? 'row-reverse' : 'row',
+      alignItems: 'flex-end',
+      marginBottom: '1.5rem',
+      width: '100%'
+    }}
+  >
     {!isOwn && (
       <div style={{ 
         width: '40px', height: '40px', borderRadius: '50%', 
@@ -36,14 +42,8 @@ const ChatBubble = ({ text, isOwn, translationLabel, avatar }) => (
         borderBottomRightRadius: isOwn ? '4px' : '24px',
         borderBottomLeftRadius: !isOwn ? '4px' : '24px',
         boxShadow: 'var(--shadow-sm)',
+        lineHeight: 1.5,
         fontWeight: 600,
-        fontSize: '1.05rem',
-        border: isOwn ? 'none' : '1px solid rgba(0,0,0,0.05)',
-        lineHeight: 1.5
-      }}>
-        {text}
-      </div>
-    </div>
   </div>
 );
 
