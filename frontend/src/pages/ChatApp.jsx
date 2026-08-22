@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Image as ImageIcon, Smile, MoreVertical, Loader2, UserPlus, Star, ShieldCheck } from 'lucide-react';
+import { Send, Image as ImageIcon, Smile, MoreVertical, Loader2, UserPlus, Star, ShieldCheck, Gamepad2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const ChatBubble = ({ text, isOwn, translationLabel, avatar }) => (
@@ -45,11 +45,7 @@ const ChatBubble = ({ text, isOwn, translationLabel, avatar }) => (
         fontWeight: 600,
         fontSize: '0.95rem'
       }}>
-        {!isOwn ? (
-          text
-        ) : (
-          text
-        )}
+        {text}
       </div>
     </div>
   </motion.div>
@@ -105,10 +101,14 @@ const ChatApp = () => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
+  
+  // Minigame State
+  const [showGame, setShowGame] = useState(false);
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [xIsNext, setXIsNext] = useState(true);
+
   const messagesEndRef = useRef(null);
 
-  // Use environment variable for the API key in Vercel (Create a .env.local file locally for testing!)
-  // Fallback obfuscated key for easy prototyping so the app works immediately:
   const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || ("gsk_" + "yqoEgBG5h4Rf8dodduIwWGdyb3FYBLk43gtTo7I101UHFHmod4Gm");
 
   const scrollToBottom = () => {
@@ -117,7 +117,7 @@ const ChatApp = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isTyping, isTranslating]);
+  }, [messages, isTyping, isTranslating, showGame, board]);
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -126,31 +126,24 @@ const ChatApp = () => {
     const userMessage = input.trim();
     setInput('');
     
-    // Add user message to UI immediately
     const newUserMessage = { id: Date.now(), text: userMessage, isOwn: true };
     setMessages(prev => [...prev, newUserMessage]);
     
     setIsTyping(true);
 
     try {
-      // Simulate typing delay before starting the translation delay
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      // Simulate "Translating..." phase
       setIsTyping(false);
       setIsTranslating(true);
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      // Prepare conversation history for the API
       const conversationHistory = messages.map(msg => ({
         role: msg.isOwn ? "user" : "assistant",
         content: msg.text
       }));
-      
-      // Append the new user message
       conversationHistory.push({ role: "user", content: userMessage });
 
-      // Call Groq API
       const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -175,8 +168,6 @@ const ChatApp = () => {
 
       if (response.ok) {
         let aiText = data.choices[0]?.message?.content || "I'm here for you.";
-        
-        // Qwen models sometimes return a <think> block, so we strip it out
         if (aiText.includes('<think>')) {
           if (aiText.includes('</think>')) {
             aiText = aiText.split('</think>')[1].trim();
@@ -185,7 +176,6 @@ const ChatApp = () => {
           }
         }
 
-        // Add AI response to UI
         setMessages(prev => [...prev, {
           id: Date.now() + 1,
           text: aiText,
@@ -220,6 +210,53 @@ const ChatApp = () => {
     }
   };
 
+  // Minigame Logic
+  const calculateWinner = (squares) => {
+    const lines = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
+    ];
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        return squares[a];
+      }
+    }
+    return null;
+  };
+
+  const winner = calculateWinner(board);
+  const isDraw = !winner && board.every(Boolean);
+
+  const handleSquareClick = (i) => {
+    if (board[i] || winner || !xIsNext) return;
+    const newBoard = [...board];
+    newBoard[i] = 'X';
+    setBoard(newBoard);
+    setXIsNext(false);
+    
+    // Auto-AI move for peer after 1s
+    if (!calculateWinner(newBoard) && !newBoard.every(Boolean)) {
+        setTimeout(() => {
+           let emptyIndices = [];
+           newBoard.forEach((val, idx) => { if (!val) emptyIndices.push(idx); });
+           if (emptyIndices.length > 0) {
+               const randomMove = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+               const aiBoard = [...newBoard];
+               aiBoard[randomMove] = 'O';
+               setBoard(aiBoard);
+               setXIsNext(true);
+           }
+        }, 1000);
+    }
+  };
+
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setXIsNext(true);
+  };
+
   return (
     <div style={{ 
       display: 'flex', flexDirection: 'column', height: '100dvh', width: '100%', 
@@ -250,6 +287,13 @@ const ChatApp = () => {
            </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button 
+            onClick={() => setShowGame(!showGame)}
+            className="btn" 
+            style={{ backgroundColor: 'var(--color-secondary)', padding: '0.5rem 1rem', color: 'var(--color-accent-purple)', display: 'flex', alignItems: 'center', gap: '0.5rem', borderRadius: '12px', border: showGame ? '2px solid var(--color-accent-purple)' : 'none' }}
+          >
+            <Gamepad2 size={16} /> <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>{showGame ? 'Close Game' : 'Play Game'}</span>
+          </button>
           <button className="btn" style={{ backgroundColor: 'var(--color-secondary)', padding: '0.5rem 1rem', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem', borderRadius: '12px' }}>
             <UserPlus size={16} /> <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Add Friend</span>
           </button>
@@ -285,6 +329,59 @@ const ChatApp = () => {
             </div>
           </div>
         )}
+        
+        {/* Minigame Injection */}
+        {showGame && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ 
+              backgroundColor: 'white', padding: '2rem', borderRadius: '24px', 
+              boxShadow: 'var(--shadow-lg)', alignSelf: 'center', width: '100%', maxWidth: '350px',
+              border: '2px solid var(--color-border)', marginBottom: '1.5rem',
+              display: 'flex', flexDirection: 'column', alignItems: 'center'
+            }}
+          >
+            <h4 style={{ color: 'var(--color-primary)', fontSize: '1.2rem', fontWeight: 800, marginBottom: '1.5rem' }}>Tic-Tac-Toe Co-op</h4>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', width: '100%', marginBottom: '1.5rem' }}>
+              {board.map((square, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => handleSquareClick(i)}
+                  disabled={!xIsNext || winner || board[i]}
+                  style={{ 
+                    height: '80px', fontSize: '2.5rem', fontWeight: 'bold', 
+                    backgroundColor: 'var(--color-secondary)', border: 'none', borderRadius: '12px', 
+                    cursor: (winner || board[i] || !xIsNext) ? 'default' : 'pointer',
+                    color: square === 'X' ? 'var(--color-accent-purple)' : 'var(--color-accent-orange)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                  }}
+                >
+                  {square}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ textAlign: 'center', fontWeight: 'bold', color: 'var(--color-text-main)', fontSize: '1.1rem', minHeight: '1.5rem' }}>
+              {winner ? (
+                 <span style={{ color: 'var(--color-accent-purple)' }}>{winner === 'X' ? 'You won! 🎉' : 'Peer won! 🤖'}</span>
+              ) : isDraw ? (
+                 "It's a draw! 🤝"
+              ) : (
+                 xIsNext ? 'Your turn (X)' : 'Peer is thinking...'
+              )}
+            </div>
+
+            {(winner || isDraw) && (
+              <button onClick={resetGame} className="btn btn-primary" style={{ marginTop: '1.5rem', width: '100%', padding: '0.75rem' }}>
+                Play Again
+              </button>
+            )}
+          </motion.div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
