@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  /* Color Palette - Delta Theme (Warm, Friendly, Pastel) */
+  --color-primary: #5A4033;      /* Deep warm brown for text and primary buttons */
+  --color-primary-light: #7A5C4D;
+  --color-secondary: #FDFBF7;    /* Warm off-white/cream background */
+  
+  /* Pastel Accents */
+  --color-accent-green: #D4E4C6; /* Soft Sage */
+  --color-accent-orange: #FFD2B8; /* Soft Peach */
+  --color-accent-purple: #C2B4FF; /* Soft Lilac */
+  --color-accent-yellow: #FFF1B8; /* Soft Butter */
+  
+  --color-text-main: #5A4033;    
+  --color-text-muted: #8B7366;
+  
+  --color-bg-page: #FDFBF7;
+  --color-bg-card: #FFFFFF;
+
+  --color-success: #8EBA79;
+  --color-warning: #FFB347;
+  --color-danger: #E74C3C;
+
+  /* Typography */
+  --font-family-sans: 'Nunito', sans-serif;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  --spacing-section: 5rem;
+
+  /* Border Radius - Very Rounded */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 9999px;
+
+  /* Shadows for depth - Soft and warm */
+  --shadow-sm: 0 4px 10px rgba(90, 64, 51, 0.05);
+  --shadow-md: 0 8px 24px rgba(90, 64, 51, 0.08);
+  --shadow-lg: 0 12px 32px rgba(90, 64, 51, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  font-weight: 800; /* Extra bold for headings to match the image style */
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Common utilities */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2rem;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-accent {
+  background-color: var(--color-accent-green);
+  color: var(--color-primary);
+}
+
+.btn-accent:hover {
+  filter: brightness(0.95);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+  text-align: center;
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.section-subtitle {
+  text-align: center;
+  font-size: 1.25rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  max-width: 600px;
+  margin: 0 auto var(--spacing-xxl) auto;
+}
+
+/* --- App UI Specific Utilities --- */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--color-bg-page);
+}
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+}
+
+/* Dark Mode Theme */
+.dark-theme {
+  --color-bg-page: #2C2420;
+  --color-bg-card: #3A2F2A;
+  --color-text-main: #FDFBF7;
+  --color-text-muted: #BFAEA6;
+  
+  --color-primary: #D4E4C6; /* Soft green becomes primary accent in dark mode */
+  --color-primary-light: #E5F2D9;
+  --color-secondary: #4A3C35;
+  
+  --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.dark-theme .card {
+    border-color: rgba(255,255,255,0.05);
+}
+
+/* Dashboard Utilities */
+.grid-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text-main);
+  border: 2px solid rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+}
+
