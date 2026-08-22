@@ -3,7 +3,6 @@ import { Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import SurveyPage from './pages/SurveyPage';
-import MatchPage from './pages/MatchPage';
 import ChatApp from './pages/ChatApp';
 import './styles/design-system.css';
 
