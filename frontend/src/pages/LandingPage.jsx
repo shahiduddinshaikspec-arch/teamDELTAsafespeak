@@ -1,5 +1,5 @@
 import React from 'react';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, Sparkles, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
