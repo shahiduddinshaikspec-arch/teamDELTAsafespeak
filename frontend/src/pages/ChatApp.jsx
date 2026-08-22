@@ -137,11 +137,11 @@ const ChatApp = () => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "allam-2-7b",
+          model: "qwen/qwen3.6-27b",
           messages: [
             {
               role: "system",
-              content: "You are an empathetic, supportive, and anonymous peer in a mental health safe space. You listen without judgment and validate feelings. IMPORTANT LANGUAGE RULE: You MUST reply in the EXACT SAME LANGUAGE and script as the user. If the user types in English, reply in English. If the user types in Hinglish (Hindi written in English letters), you MUST reply in Hinglish. NEVER reply in Arabic script. Keep your responses very concise (1-3 sentences max) and conversational. Do not give medical advice."
+              content: "You are an empathetic, supportive, and anonymous peer in a mental health safe space. You listen without judgment and validate feelings. IMPORTANT LANGUAGE RULE: You MUST reply in the EXACT SAME LANGUAGE and script as the user. If the user types in English, reply in English. If the user types in Hinglish (Hindi written in English letters), you MUST reply in Hinglish. Keep your responses very concise (1-3 sentences max) and conversational. Do not give medical advice."
             },
             ...conversationHistory
           ],
@@ -155,7 +155,10 @@ const ChatApp = () => {
       }
 
       const data = await response.json();
-      const aiText = data.choices[0]?.message?.content || "I'm here for you.";
+      let aiText = data.choices[0]?.message?.content || "I'm here for you.";
+      
+      // Qwen models sometimes return a <think> block, so we strip it out before showing the user
+      aiText = aiText.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
 
       // Add AI response to UI
       setMessages(prev => [...prev, {
