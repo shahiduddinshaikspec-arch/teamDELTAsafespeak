@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import SurveyPage from './pages/SurveyPage';
+import MatchPage from './pages/MatchPage';
+import ChatApp from './pages/ChatApp';
 import './styles/design-system.css';
 
 function App() {
@@ -19,7 +24,13 @@ function App() {
 
   return (
     <div className={`app-root ${theme === 'dark' ? 'dark-theme' : ''}`}>
-      <LandingPage theme={theme} toggleTheme={toggleTheme} />
+      <Routes>
+        <Route path="/" element={<LandingPage theme={theme} toggleTheme={toggleTheme} />} />
+        <Route path="/login" element={<LoginPage theme={theme} />} />
+        <Route path="/survey" element={<SurveyPage />} />
+        <Route path="/match" element={<MatchPage />} />
+        <Route path="/chat" element={<ChatApp />} />
+      </Routes>
     </div>
   );
 }

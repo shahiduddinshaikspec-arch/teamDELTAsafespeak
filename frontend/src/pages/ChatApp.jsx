@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Image as ImageIcon, Smile, MoreVertical, Loader2 } from 'lucide-react';
+import { Send, Image as ImageIcon, Smile, MoreVertical, Loader2, UserPlus, Star, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
-import DecryptedText from '../components/DecryptedText';
 
 const ChatBubble = ({ text, isOwn, translationLabel, avatar }) => (
   <motion.div 
@@ -47,13 +46,7 @@ const ChatBubble = ({ text, isOwn, translationLabel, avatar }) => (
         fontSize: '0.95rem'
       }}>
         {!isOwn ? (
-          <DecryptedText 
-            text={text}
-            animateOn="view"
-            sequential={true}
-            speed={25}
-            revealDirection="start"
-          />
+          text
         ) : (
           text
         )}
@@ -80,7 +73,10 @@ const TypingIndicator = () => (
       🤖
     </div>
     
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', maxWidth: '75%' }}>
+      <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--color-accent-purple)', marginBottom: '0.4rem', marginLeft: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        Anonymous Peer ✨
+      </span>
       <div style={{
         backgroundColor: 'white',
         padding: '1rem 1.25rem',
@@ -225,21 +221,32 @@ const ChatApp = () => {
         padding: '1.5rem', backgroundColor: 'white', borderBottom: '1px solid rgba(0,0,0,0.05)',
         borderTopLeftRadius: 'inherit', borderTopRightRadius: 'inherit', zIndex: 10
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
            <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--color-accent-purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)' }}>
-             <span style={{ fontSize: '1.4rem' }}>🤖</span>
+             <span style={{ fontSize: '1.4rem' }}>🐊</span>
            </div>
            <div>
-             <div style={{ fontWeight: '800', fontSize: '1.2rem', color: 'var(--color-primary)' }}>Anonymous Peer</div>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+               <div style={{ fontWeight: '800', fontSize: '1.2rem', color: 'var(--color-primary)' }}>Anonymous Alligator</div>
+               <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', backgroundColor: 'var(--color-secondary)', padding: '0.1rem 0.4rem', borderRadius: '6px' }}>
+                  <ShieldCheck size={12} color="var(--color-primary)" />
+                  <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--color-primary)' }}>120 CS</span>
+               </div>
+             </div>
              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 700 }}>
                 <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--color-accent-green)' }}></div>
-                Active Now • AI SafeSpace
+                Active Now
              </div>
            </div>
         </div>
-        <button className="btn" style={{ backgroundColor: 'transparent', padding: '0.5rem', color: 'var(--color-text-muted)' }}>
-          <MoreVertical size={24} />
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button className="btn" style={{ backgroundColor: 'var(--color-secondary)', padding: '0.5rem 1rem', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem', borderRadius: '12px' }}>
+            <UserPlus size={16} /> <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Add Friend</span>
+          </button>
+          <button className="btn" style={{ backgroundColor: 'var(--color-secondary)', padding: '0.5rem 1rem', color: 'var(--color-accent-orange)', display: 'flex', alignItems: 'center', gap: '0.5rem', borderRadius: '12px' }}>
+            <Star size={16} /> <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Review</span>
+          </button>
+        </div>
       </div>
 
       {/* Chat Messages */}

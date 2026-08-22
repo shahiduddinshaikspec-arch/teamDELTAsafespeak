@@ -1,5 +1,6 @@
 import React from 'react';
 import { Moon, Sun } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
 import Dashboard from './Dashboard';
@@ -38,7 +39,7 @@ const LandingPage = ({ theme, toggleTheme }) => {
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             {theme === 'dark' ? 'Light' : 'Dark'}
           </button>
-          <a href="#demo" className="btn btn-primary" style={{ padding: '0.75rem 2rem', textDecoration: 'none' }}>See It In Action</a>
+          <Link to="/login" className="btn btn-primary" style={{ padding: '0.75rem 2rem', textDecoration: 'none' }}>Get Started</Link>
         </div>
       </header>
 
@@ -60,6 +61,13 @@ const LandingPage = ({ theme, toggleTheme }) => {
           <div className="container">
             <h2 className="section-title">Experience the Platform</h2>
             <p className="section-subtitle">A seamless blend of tech-driven mindfulness and empathetic community support, right at your fingertips.</p>
+            <Link to="/login" style={{ textDecoration: 'none' }}>
+              <button className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.1rem', padding: '1.25rem 2.5rem', marginBottom: '2rem' }}>
+                <Sparkles size={20} />
+                Get Started
+                <ArrowRight size={20} />
+              </button>
+            </Link>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem', marginTop: '3rem' }}>
               
