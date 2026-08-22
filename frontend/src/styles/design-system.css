@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
 :root {
-  /* Color Palette - Freud Theme (Warm, Friendly, Pastel) */
+  /* Color Palette - Delta Theme (Warm, Friendly, Pastel) */
   --color-primary: #5A4033;      /* Deep warm brown for text and primary buttons */
   --color-primary-light: #7A5C4D;
   --color-secondary: #FDFBF7;    /* Warm off-white/cream background */
@@ -133,3 +133,58 @@ button {
   max-width: 600px;
   margin: 0 auto var(--spacing-xxl) auto;
 }
+
+/* --- App UI Specific Utilities --- */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--color-bg-page);
+}
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+}
+
+/* Dark Mode Theme */
+.dark-theme {
+  --color-bg-page: #2C2420;
+  --color-bg-card: #3A2F2A;
+  --color-text-main: #FDFBF7;
+  --color-text-muted: #BFAEA6;
+  
+  --color-primary: #D4E4C6; /* Soft green becomes primary accent in dark mode */
+  --color-primary-light: #E5F2D9;
+  --color-secondary: #4A3C35;
+  
+  --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.dark-theme .card {
+    border-color: rgba(255,255,255,0.05);
+}
+
+/* Dashboard Utilities */
+.grid-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text-main);
+  border: 2px solid rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+}
+

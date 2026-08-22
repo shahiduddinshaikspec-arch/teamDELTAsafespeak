@@ -29,7 +29,7 @@ const Hero = () => {
         </p>
         
         <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
-          <button className="btn btn-primary" style={{ padding: '1rem 2.5rem', fontSize: '1.125rem' }}>Start Chatting</button>
+          <a href="#demo" className="btn btn-primary" style={{ padding: '1rem 2.5rem', fontSize: '1.125rem', textDecoration: 'none' }}>Start Chatting</a>
           <button className="btn" style={{ backgroundColor: 'var(--color-accent-orange)', color: 'var(--color-primary)', border: 'none' }}>Learn More</button>
         </div>
       </div>
