@@ -138,6 +138,7 @@ const ChatApp = () => {
         },
         body: JSON.stringify({
           model: "qwen/qwen3.6-27b",
+          max_tokens: 2048,
           messages: [
             {
               role: "system",
@@ -146,28 +147,32 @@ const ChatApp = () => {
             ...conversationHistory
           ],
           temperature: 0.7,
-          max_tokens: 150,
         })
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch from Groq API");
-      }
-
       const data = await response.json();
-      let aiText = data.choices[0]?.message?.content || "I'm here for you.";
-      
-      // Qwen models sometimes return a <think> block, so we strip it out before showing the user
-      aiText = aiText.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
 
-      // Add AI response to UI
-      setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        text: aiText,
-        isOwn: false,
-        translationLabel: "Anonymous Peer ✨",
-        avatar: "🤖"
-      }]);
+      if (response.ok) {
+        let aiText = data.choices[0]?.message?.content || "I'm here for you.";
+        
+        // Qwen models sometimes return a <think> block, so we strip it out
+        if (aiText.includes('<think>')) {
+          if (aiText.includes('</think>')) {
+            aiText = aiText.split('</think>')[1].trim();
+          } else {
+            aiText = "I'm here and listening, but I had trouble processing that. Can we take it one step at a time?";
+          }
+        }
+
+        // Add AI response to UI
+        setMessages(prev => [...prev, {
+          id: Date.now() + 1,
+          text: aiText,
+          isOwn: false,
+          translationLabel: "Anonymous Peer ✨",
+          avatar: "🤖"
+        }]);
+      }
 
     } catch (error) {
       console.error("Error communicating with AI Peer:", error);
