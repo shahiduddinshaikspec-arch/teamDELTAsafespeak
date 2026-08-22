@@ -44,7 +44,22 @@ const ChatBubble = ({ text, isOwn, translationLabel, avatar }) => (
         boxShadow: 'var(--shadow-sm)',
         lineHeight: 1.5,
         fontWeight: 600,
-  </div>
+        fontSize: '0.95rem'
+      }}>
+        {!isOwn ? (
+          <DecryptedText 
+            text={text}
+            animateOn="view"
+            sequential={true}
+            speed={25}
+            revealDirection="start"
+          />
+        ) : (
+          text
+        )}
+      </div>
+    </div>
+  </motion.div>
 );
 
 const TypingIndicator = () => (
