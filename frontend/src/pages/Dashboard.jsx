@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Heart, Activity, Wind, Moon, Sun, ArrowRight, Zap } from 'lucide-react';
+import { Heart, Activity, Wind, Moon, Sun, ArrowRight, Zap, AlertCircle, CheckCircle } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
-const data = [
+const dummyData = [
   { name: 'Mon', score: 65, avg: 50 },
   { name: 'Tue', score: 85, avg: 55 },
   { name: 'Wed', score: 40, avg: 60 },
@@ -34,10 +35,44 @@ const StatCard = ({ title, value, subtitle, icon: Icon, bgColor, textColor = 'va
   </div>
 );
 
-const MoodSelector = () => {
+const MoodSelector = ({ onMoodLogged }) => {
   const [selected, setSelected] = useState(3);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState(null);
   const moods = ['😢', '😕', '😐', '🙂', '😁'];
   
+  const handleLogMood = async () => {
+    setLoading(true);
+    setStatus(null);
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        setStatus({ type: 'error', message: 'Authentication required. Please sign in.' });
+        setLoading(false);
+        return;
+      }
+
+      const { error } = await supabase.from('mood_logs').insert([
+        { user_id: user.id, mood_score: selected }
+      ]);
+
+      if (error) {
+        if (error.code === '42P01') {
+          setStatus({ type: 'error', message: 'Database tables missing. Please run the provided SQL schema in Supabase.' });
+        } else {
+          setStatus({ type: 'error', message: `Database error: ${error.message}` });
+        }
+      } else {
+        setStatus({ type: 'success', message: 'Mood logged successfully! 🌿' });
+        if (onMoodLogged) onMoodLogged();
+      }
+    } catch (err) {
+      setStatus({ type: 'error', message: `Unexpected error: ${err.message}` });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div style={{ 
       backgroundColor: 'var(--color-secondary)', 
@@ -75,21 +110,75 @@ const MoodSelector = () => {
           </button>
         ))}
       </div>
-      <button className="btn btn-primary" onClick={() => window.location.href='/login'} style={{ marginTop: '2rem', padding: '0.75rem 2rem', width: '100%', alignSelf: 'center' }}>
-        Log Mood
+      
+      {status && (
+        <div style={{ marginTop: '1.5rem', padding: '0.75rem', borderRadius: '12px', backgroundColor: status.type === 'error' ? '#fee2e2' : '#dcfce7', color: status.type === 'error' ? '#991b1b' : '#166534', fontSize: '0.9rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
+          {status.type === 'error' ? <AlertCircle size={16} /> : <CheckCircle size={16} />}
+          {status.message}
+        </div>
+      )}
+
+      <button 
+        className="btn btn-primary" 
+        onClick={handleLogMood} 
+        disabled={loading}
+        style={{ marginTop: status ? '1rem' : '2rem', padding: '0.75rem 2rem', width: '100%', alignSelf: 'center', opacity: loading ? 0.7 : 1 }}
+      >
+        {loading ? 'Logging...' : 'Log Mood'}
       </button>
     </div>
   );
 };
 
 const Dashboard = () => {
+  const [chartData, setChartData] = useState(dummyData);
+  const [dbError, setDbError] = useState(null);
+
+  const fetchMoodData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: logs, error } = await supabase
+        .from('mood_logs')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true })
+        .limit(14); // get last 14 logs
+
+      if (error) {
+        if (error.code !== '42P01') {
+           setDbError(`Failed to fetch history: ${error.message}`);
+        }
+        return; // fallback to dummy data
+      }
+
+      if (logs && logs.length > 0) {
+        const formattedData = logs.map(log => ({
+          name: new Date(log.created_at).toLocaleDateString(undefined, { weekday: 'short', month: 'numeric', day: 'numeric' }),
+          score: (log.mood_score / 4) * 100, // scale 0-4 to 0-100
+          avg: 50
+        }));
+        // If we have less than 7 data points, we can pad it or just show what we have.
+        setChartData(formattedData);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchMoodData();
+  }, []);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', maxWidth: '1000px', margin: '0 auto' }}>
       {/* Header Profile Section */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '2.5rem', letterSpacing: '-0.03em', color: 'var(--color-primary)', marginBottom: '0.25rem' }}>Hi, Anonymous_7 ✨</h1>
+          <h1 style={{ fontSize: '2.5rem', letterSpacing: '-0.03em', color: 'var(--color-primary)', marginBottom: '0.25rem' }}>Hi, Friend ✨</h1>
           <p style={{ fontSize: '1.1rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>Your holistic wellness overview for this week.</p>
+          {dbError && <p style={{ color: '#e11d48', fontSize: '0.9rem', fontWeight: 600, marginTop: '0.5rem' }}>{dbError}</p>}
         </div>
         <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: 'var(--color-accent-green)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', boxShadow: 'var(--shadow-sm)' }}>
           🌿
@@ -143,7 +232,7 @@ const Dashboard = () => {
           
           <div style={{ height: '260px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+              <AreaChart data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3}/>
@@ -165,7 +254,7 @@ const Dashboard = () => {
 
         {/* Mood Selector Section */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <MoodSelector />
+          <MoodSelector onMoodLogged={fetchMoodData} />
           
           {/* Quick Action */}
           <div style={{ 
