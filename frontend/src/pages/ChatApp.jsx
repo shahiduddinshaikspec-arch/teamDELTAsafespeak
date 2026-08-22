@@ -104,6 +104,7 @@ const ChatApp = () => {
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
   const messagesEndRef = useRef(null);
 
   // Use environment variable for the API key in Vercel (Create a .env.local file locally for testing!)
@@ -116,11 +117,11 @@ const ChatApp = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isTyping]);
+  }, [messages, isTyping, isTranslating]);
 
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!input.trim() || isTyping) return;
+    if (!input.trim() || isTyping || isTranslating) return;
     
     const userMessage = input.trim();
     setInput('');
@@ -132,6 +133,14 @@ const ChatApp = () => {
     setIsTyping(true);
 
     try {
+      // Simulate typing delay before starting the translation delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Simulate "Translating..." phase
+      setIsTyping(false);
+      setIsTranslating(true);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
       // Prepare conversation history for the API
       const conversationHistory = messages.map(msg => ({
         role: msg.isOwn ? "user" : "assistant",
@@ -154,7 +163,7 @@ const ChatApp = () => {
           messages: [
             {
               role: "system",
-              content: "You are an empathetic, supportive, and anonymous peer in a mental health safe space. You listen without judgment and validate feelings. IMPORTANT LANGUAGE RULE: You MUST reply in the EXACT SAME LANGUAGE and script as the user. If the user types in English, reply in English. If the user types in Hinglish (Hindi written in English letters), you MUST reply in Hinglish. Keep your responses very concise (1-3 sentences max) and conversational. Do not give medical advice."
+              content: "You are an empathetic, supportive, and anonymous peer in a mental health safe space. You listen without judgment and validate feelings. CRITICAL RULE: YOU MUST REPLY IN THE EXACT SAME LANGUAGE AS THE USER. If the user types in Hindi, reply in Hindi. If the user types in Hinglish (Hindi written in English), you MUST reply in Hinglish. Do NOT reply in English unless the user's message is entirely in English. Keep your responses very concise (1-3 sentences max) and conversational."
             },
             ...conversationHistory
           ],
@@ -196,7 +205,7 @@ const ChatApp = () => {
         }]);
       }
 
-    } catch (error) {
+      } catch (error) {
       console.error("Error communicating with AI Peer:", error);
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
@@ -207,19 +216,20 @@ const ChatApp = () => {
       }]);
     } finally {
       setIsTyping(false);
+      setIsTranslating(false);
     }
   };
 
   return (
     <div style={{ 
-      display: 'flex', flexDirection: 'column', height: '100%', 
-      backgroundColor: 'var(--color-secondary)', borderRadius: 'inherit'
+      display: 'flex', flexDirection: 'column', height: '100dvh', width: '100%', 
+      backgroundColor: 'var(--color-secondary)'
     }}>
       {/* Chat Header */}
       <div style={{ 
         display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
         padding: '1.5rem', backgroundColor: 'white', borderBottom: '1px solid rgba(0,0,0,0.05)',
-        borderTopLeftRadius: 'inherit', borderTopRightRadius: 'inherit', zIndex: 10
+        zIndex: 10
       }}>
          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
            <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--color-accent-purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)' }}>
@@ -255,11 +265,31 @@ const ChatApp = () => {
           <ChatBubble key={msg.id} {...msg} />
         ))}
         {isTyping && <TypingIndicator />}
+        {isTranslating && (
+          <div style={{
+            display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '1.5rem', width: '100%', animation: 'fadeIn 0.3s ease'
+          }}>
+            <div style={{ 
+              width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--color-secondary)', 
+              flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', boxShadow: 'var(--shadow-sm)'
+            }}>🤖</div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', maxWidth: '75%' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--color-accent-purple)', marginBottom: '0.4rem', marginLeft: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Anonymous Peer ✨</span>
+              <div style={{
+                backgroundColor: 'white', padding: '1rem 1.25rem', borderRadius: '24px', borderBottomLeftRadius: '4px',
+                boxShadow: 'var(--shadow-sm)', border: '1px solid rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '0.5rem'
+              }}>
+                <Loader2 className="animate-spin" size={18} color="var(--color-text-muted)" />
+                <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>Translating...</span>
+              </div>
+            </div>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Chat Input */}
-      <div style={{ padding: '1.5rem', backgroundColor: 'white', borderTop: '1px solid rgba(0,0,0,0.05)', borderBottomLeftRadius: 'inherit', borderBottomRightRadius: 'inherit' }}>
+      <div style={{ padding: '1.5rem', backgroundColor: 'white', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
         <form onSubmit={handleSend} style={{ 
           display: 'flex', gap: '0.75rem', backgroundColor: 'var(--color-secondary)',
           padding: '0.5rem', borderRadius: '32px', alignItems: 'center',

@@ -6,31 +6,50 @@ const questions = [
   {
     id: 1,
     text: "How would you describe your mood right now?",
-    options: ["Overwhelmed", "Anxious", "Lonely", "Just need to vent"]
+    options: ["Overwhelmed", "Anxious", "Lonely", "Just need to vent", "Other (Type your own)"]
   },
   {
     id: 2,
     text: "What kind of support are you looking for today?",
-    options: ["Someone to listen", "Practical advice", "Shared experiences", "Distraction"]
+    options: ["Someone to listen", "Practical advice", "Shared experiences", "Distraction", "Other (Type your own)"]
   },
   {
     id: 3,
     text: "How quickly do you want to start talking?",
-    options: ["Right now, it's urgent", "Whenever someone is free", "I'm just browsing"]
+    options: ["Right now, it's urgent", "Whenever someone is free", "I'm just browsing", "Other (Type your own)"]
   }
 ];
 
 export default function SurveyPage() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [showOtherInput, setShowOtherInput] = useState(false);
+  const [otherText, setOtherText] = useState("");
   const navigate = useNavigate();
 
   const handleSelect = (option) => {
-    // In a real app, save the option to state/Supabase here
+    if (option.includes("Other")) {
+      setShowOtherInput(true);
+      return;
+    }
+    
+    proceedToNext();
+  };
+
+  const handleOtherSubmit = (e) => {
+    e.preventDefault();
+    if (!otherText.trim()) return;
+    proceedToNext();
+  };
+
+  const proceedToNext = () => {
+    setOtherText("");
+    setShowOtherInput(false);
+    
     if (currentStep < questions.length - 1) {
       setCurrentStep(prev => prev + 1);
     } else {
-      // Survey complete, analyze and match
-      navigate('/match');
+      // Survey complete, redirect to home with matching unlocked
+      navigate('/home?matched=true');
     }
   };
 
@@ -82,35 +101,85 @@ export default function SurveyPage() {
             </h2>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-              {questions[currentStep].options.map((option, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleSelect(option)}
-                  style={{
-                    padding: '1.25rem',
-                    borderRadius: '16px',
-                    border: '2px solid var(--color-border)',
-                    backgroundColor: 'white',
-                    color: 'var(--color-text-main)',
-                    fontSize: '1rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    textAlign: 'left',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--color-primary)';
-                    e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--color-border)';
-                    e.currentTarget.style.backgroundColor = 'white';
-                  }}
-                >
-                  {option}
-                </button>
-              ))}
+              {!showOtherInput ? (
+                questions[currentStep].options.map((option, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSelect(option)}
+                    style={{
+                      padding: '1.25rem',
+                      borderRadius: '16px',
+                      border: '2px solid var(--color-border)',
+                      backgroundColor: 'white',
+                      color: 'var(--color-text-main)',
+                      fontSize: '1rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      textAlign: 'left',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--color-primary)';
+                      e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--color-border)';
+                      e.currentTarget.style.backgroundColor = 'white';
+                    }}
+                  >
+                    {option}
+                  </button>
+                ))
+              ) : (
+                <form onSubmit={handleOtherSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
+                  <textarea
+                    autoFocus
+                    value={otherText}
+                    onChange={(e) => setOtherText(e.target.value)}
+                    placeholder="Type exactly how you feel..."
+                    style={{
+                      width: '100%',
+                      padding: '1.25rem',
+                      borderRadius: '16px',
+                      border: '2px solid var(--color-primary)',
+                      backgroundColor: 'white',
+                      color: 'var(--color-text-main)',
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      outline: 'none',
+                      fontFamily: 'inherit',
+                      resize: 'vertical',
+                      minHeight: '120px'
+                    }}
+                  />
+                  <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button 
+                      type="button" 
+                      onClick={() => setShowOtherInput(false)}
+                      style={{
+                        padding: '1rem', borderRadius: '12px', flex: 1,
+                        backgroundColor: 'var(--color-secondary)', color: 'var(--color-text-main)',
+                        border: 'none', fontWeight: 700, cursor: 'pointer'
+                      }}
+                    >
+                      Back
+                    </button>
+                    <button 
+                      type="submit" 
+                      disabled={!otherText.trim()}
+                      style={{
+                        padding: '1rem', borderRadius: '12px', flex: 2,
+                        backgroundColor: otherText.trim() ? 'var(--color-primary)' : 'rgba(90,64,51,0.3)', 
+                        color: 'white', border: 'none', fontWeight: 700,
+                        cursor: otherText.trim() ? 'pointer' : 'default'
+                      }}
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           </motion.div>
         </AnimatePresence>

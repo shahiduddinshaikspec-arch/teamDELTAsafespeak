@@ -25,10 +25,9 @@ function App() {
   return (
     <div className={`app-root ${theme === 'dark' ? 'dark-theme' : ''}`}>
       <Routes>
-        <Route path="/" element={<LandingPage theme={theme} toggleTheme={toggleTheme} />} />
-        <Route path="/login" element={<LoginPage theme={theme} />} />
+        <Route path="/" element={<LoginPage theme={theme} />} />
+        <Route path="/home" element={<LandingPage theme={theme} toggleTheme={toggleTheme} />} />
         <Route path="/survey" element={<SurveyPage />} />
-        <Route path="/match" element={<MatchPage />} />
         <Route path="/chat" element={<ChatApp />} />
       </Routes>
     </div>

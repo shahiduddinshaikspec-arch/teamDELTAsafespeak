@@ -39,14 +39,14 @@ export default function LoginPage({ theme }) {
         if (signUpError) throw signUpError;
       }
 
-      // If successful, navigate to the survey
-      navigate('/survey');
+      // If successful, navigate to home (Landing Page)
+      navigate('/home');
     } catch (err) {
       console.error('Auth error:', err);
       // Fallback for prototyping if they haven't set up the API key yet
       if (err.message.includes('URL is required') || err.message.includes('JWSError') || err.message.includes('fetch')) {
          console.warn("Bypassing Auth for prototype mode since keys aren't configured");
-         navigate('/survey');
+         navigate('/home');
       } else {
          setError(err.message);
       }

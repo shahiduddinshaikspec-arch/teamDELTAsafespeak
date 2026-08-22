@@ -1,6 +1,7 @@
-import React from 'react';
-import { Moon, Sun, Sparkles, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Moon, Sun, Sparkles, ArrowRight, UserPlus, Star, ShieldCheck } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
 import Dashboard from './Dashboard';
