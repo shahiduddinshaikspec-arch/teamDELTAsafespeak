@@ -4,6 +4,9 @@ import Hero from '../components/Hero';
 import Features from '../components/Features';
 import Dashboard from './Dashboard';
 import ChatApp from './ChatApp';
+import JournalApp from './JournalApp';
+import Resources from './Resources';
+import Community from './Community';
 import PrivacySection from '../components/PrivacySection';
 import WelcomeScreens from '../components/WelcomeScreens';
 
@@ -96,6 +99,53 @@ const LandingPage = ({ theme, toggleTheme }) => {
                 </div>
               </div>
 
+              {/* Journal Interface Showcase */}
+              <div style={{ 
+                backgroundColor: 'var(--color-bg-card)', 
+                padding: '3rem', 
+                borderRadius: 'var(--radius-xl)', 
+                boxShadow: 'var(--shadow-lg)',
+                border: '4px solid rgba(0,0,0,0.02)',
+                marginTop: '2rem'
+              }}>
+                <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                   <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--color-accent-yellow)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>3</div>
+                   <h3 style={{ fontSize: '1.8rem', color: 'var(--color-primary)' }}>AI Mental Space</h3>
+                </div>
+                <JournalApp />
+              </div>
+
+              {/* Resources Showcase */}
+              <div style={{ 
+                backgroundColor: 'var(--color-bg-card)', 
+                padding: '3rem', 
+                borderRadius: 'var(--radius-xl)', 
+                boxShadow: 'var(--shadow-lg)',
+                border: '4px solid rgba(0,0,0,0.02)',
+                marginTop: '2rem'
+              }}>
+                <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                   <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--color-accent-orange)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>4</div>
+                   <h3 style={{ fontSize: '1.8rem', color: 'var(--color-primary)' }}>Mindful Resources</h3>
+                </div>
+                <Resources />
+              </div>
+
+              {/* Community Showcase */}
+              <div style={{ 
+                backgroundColor: 'var(--color-bg-card)', 
+                padding: '3rem', 
+                borderRadius: 'var(--radius-xl)', 
+                boxShadow: 'var(--shadow-lg)',
+                border: '4px solid rgba(0,0,0,0.02)',
+                marginTop: '2rem'
+              }}>
+                <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                   <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--color-accent-green)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>5</div>
+                   <h3 style={{ fontSize: '1.8rem', color: 'var(--color-primary)' }}>The Support Circle</h3>
+                </div>
+                <Community />
+              </div>
             </div>
           </div>
         </section>

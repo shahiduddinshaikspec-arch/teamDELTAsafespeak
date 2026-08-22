@@ -69,8 +69,8 @@ const FrameCard = ({ step, title, bgColor, icon: Icon, isFirst }) => {
              filter: 'blur(15px)',
              zIndex: 0
            }} />
-           <div style={{ zIndex: 1, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', transition: 'transform 0.3s ease', padding: '1rem' }} className="illustration-wrapper">
-             <img src={Icon} alt={title} style={{ width: '100%', height: '100%', maxHeight: '260px', objectFit: 'contain' }} />
+           <div style={{ zIndex: 1, transform: 'scale(0.9)', transition: 'transform 0.3s ease' }} className="illustration-wrapper">
+             <img src={Icon} alt={title} style={{ width: 220, height: 220, objectFit: 'contain' }} />
            </div>
         </div>
       </div>
