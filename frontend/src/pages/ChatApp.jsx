@@ -152,7 +152,7 @@ const ChatApp = () => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
+          model: "qwen/qwen3.6-27b",
           max_tokens: 2048,
           messages: [
             {
@@ -186,6 +186,15 @@ const ChatApp = () => {
           isOwn: false,
           translationLabel: "Anonymous Peer ✨",
           avatar: "🤖"
+        }]);
+      } else {
+        console.error("API Error Response:", data);
+        setMessages(prev => [...prev, {
+          id: Date.now() + 1,
+          text: "I'm sorry, I'm having trouble connecting right now, but please know I'm still listening. (API Error: " + (data.error?.message || "Unknown error") + ")",
+          isOwn: false,
+          translationLabel: "Connection Error",
+          avatar: "⚠️"
         }]);
       }
 
