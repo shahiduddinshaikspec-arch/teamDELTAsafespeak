@@ -189,9 +189,10 @@ const ChatApp = () => {
         }]);
       } else {
         console.error("API Error Response:", data);
+        const errorMsg = data.error?.message || "Unknown error";
         setMessages(prev => [...prev, {
           id: Date.now() + 1,
-          text: "I'm sorry, I'm having trouble connecting right now, but please know I'm still listening. (API Error: " + (data.error?.message || "Unknown error") + ")",
+          text: `Error: ${errorMsg}. Action: Please check API key, model limits, or try again later.`,
           isOwn: false,
           translationLabel: "Connection Error",
           avatar: "⚠️"
@@ -200,12 +201,11 @@ const ChatApp = () => {
 
     } catch (error) {
       console.error("Error communicating with AI Peer:", error);
-      // Fallback message in case of error
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
-        text: "I'm sorry, I'm having trouble connecting right now, but please know I'm still listening.",
+        text: `Error: Network or server unreachable. Action: Please check your internet connection and try sending again.`,
         isOwn: false,
-        translationLabel: "Connection Error",
+        translationLabel: "Network Error",
         avatar: "⚠️"
       }]);
     } finally {
