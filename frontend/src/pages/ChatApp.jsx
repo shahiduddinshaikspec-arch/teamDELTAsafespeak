@@ -95,8 +95,8 @@ const ChatApp = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Split to bypass GitHub secret scanning for the hackathon
-  const GROQ_API_KEY = "gsk_" + "yqoEgBG5h4Rf8dodduIw" + "WGdyb3FYBLk43gtTo7I101UHFHmod4Gm";
+  // Use environment variable for the API key in Vercel
+  const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
